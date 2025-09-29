@@ -1,0 +1,40 @@
+# Virtual environments
+venv/
+.venv/
+.venv311/
+
+# Python cache and build artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+build/
+dist/
+*.egg-info/
+
+# Local environment/config
+.env
+.env.*
+
+# FAISS artifacts and embeddings cache
+embeddings/faiss_index/
+*.faiss
+*.pkl
+
+# Logs
+logs/
+*.log
+
+# Editors/IDE
+.vscode/
+.idea/
+*.code-workspace
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Misc
+*.bak
+*.swp
+*.swo
