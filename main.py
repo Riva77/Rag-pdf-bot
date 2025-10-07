@@ -7,7 +7,9 @@ def main():
     # Load environment variables from .env file
     load_dotenv()
     
-    file_path = "ingestion/coffee.pdf"
+    file_paths = [
+        "ingestion/IT_policies.pdf",
+    ]
 
     # Initialize cache and FAISS search
     print("  Initializing RAG system...")
@@ -19,9 +21,11 @@ def main():
     else:
         print("  Some components unavailable - continuing...")
 
-    # Run embedding pipeline (includes ingestion + embedding)
+    # Run embedding pipeline (includes ingestion + embedding) for each PDF
     print("  Preparing document embeddings...")
-    run_embedding_pipeline(file_path)
+    for fp in file_paths:
+        print(f"  -> Indexing: {fp}")
+        run_embedding_pipeline(fp)
     print("  Documents ready for search!")
 
     # Query pipeline with cache integration

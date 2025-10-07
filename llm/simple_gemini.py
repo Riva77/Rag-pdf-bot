@@ -25,7 +25,7 @@ def generate_answer(query: str, context_documents: List[Dict]) -> str:
     try:
         # Configure Gemini
         genai.configure(api_key=api_key) 
-        model = genai.GenerativeModel('gemini-pro-latest') 
+        model = genai.GenerativeModel('gemini-2.0-flash-lite') 
         
         # Build prompt using prompt builder
         prompt = build_rag_prompt(query, context_documents)

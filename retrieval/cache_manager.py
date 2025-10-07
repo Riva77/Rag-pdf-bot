@@ -159,6 +159,22 @@ def cleanup_old_entries(max_age_days: int = 30):
     print(f" Cleaned up {removed} old cache entries.")
 
 
+def clear_cache(pattern: str = "query_cache:*") -> int:
+    """
+    Delete all cache entries matching the given pattern (defaults to query_cache:*).
+    Returns the number of deleted keys.
+    """
+    if redis_client is None:
+        raise RuntimeError("Cache not initialized. Call initialize_cache() first.")
+
+    keys = redis_client.keys(pattern)
+    deleted = 0
+    if keys:
+        deleted = redis_client.delete(*keys)
+    print(f" Cleared {deleted} cache entries matching '{pattern}'.")
+    return int(deleted)
+
+
 def process_query_with_cache(processed_query: str, query_embedding: np.ndarray, threshold: float = 0.85) -> Dict:
     """
     Main integration function: Check cache first, return cached answer or None.

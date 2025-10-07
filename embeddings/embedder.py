@@ -67,12 +67,12 @@ def embed_chunks(chunks, source: str = "coffee.pdf", batch_size: int = 64) -> bo
     if existing_meta and file_hash:
         already_indexed = any(m.get("file_hash") == file_hash for m in existing_meta)
         if already_indexed:
-            print("ℹ️ Skipping embedding: this PDF appears to be already embedded (hash match).")
+            print(" Skipping embedding: this PDF appears to be already embedded (hash match).")
             return False
 
     # Step 1: Embed in batches to control memory
     if not chunks:
-        print("⚠️ No chunks to embed. Skipping.")
+        print(" No chunks to embed. Skipping.")
         return False
 
     embeddings_list = []

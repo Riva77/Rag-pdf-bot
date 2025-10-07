@@ -44,7 +44,7 @@ def initialize_faiss_search():
         return False
 
 
-def search_similar_documents(query_vector: np.ndarray, k: int = 5) -> List[Dict]:
+def search_similar_documents(query_vector: np.ndarray, k: int = 10) -> List[Dict]:
     """
     Search for similar documents in FAISS index using COSINE SIMILARITY.
     Uses FAISS's optimized cosine similarity for better performance.
@@ -95,7 +95,7 @@ def search_similar_documents(query_vector: np.ndarray, k: int = 5) -> List[Dict]
         return []
 
 
-def search_with_threshold(query_vector: np.ndarray, k: int = 5, threshold: float = 0.7) -> List[Dict]:
+def search_with_threshold(query_vector: np.ndarray, k: int = 10, threshold: float = 0.6) -> List[Dict]:
     """
     Search for similar documents with a cosine similarity threshold.
     

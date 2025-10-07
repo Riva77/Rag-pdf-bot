@@ -48,6 +48,12 @@ Notes:
 python main.py
 ```
 
+### 6. Run the Streamlit UI (optional)
+
+```bash
+streamlit run ui/app.py
+```
+
 ## 🔧 What You Need
 
 ### Required:

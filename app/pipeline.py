@@ -6,7 +6,7 @@ from ingestion.splitter import chunk_text
 from embeddings.embedder import embed_chunks   # import embedding part
 from retrieval.query_processor import preprocess_query, normalize_query, extract_keywords
 from retrieval.cache_manager import initialize_cache, process_query_with_cache, save_llm_response_to_cache
-from retrieval.faiss_search import initialize_faiss_search, search_with_threshold
+from retrieval.faiss_search import initialize_faiss_search, search_with_threshold, search_similar_documents
 from llm.simple_gemini import generate_answer
 
 def run_ingestion_pipeline(pdf_path):
@@ -101,7 +101,7 @@ def run_query_pipeline():
     print(f" Keywords: {keywords}")
     
     # Search FAISS index for similar documents with quality threshold ( FAISS SEARCH HAPPENS HERE)
-    similar_docs = search_with_threshold(query_vector, k=5, threshold=0.7)
+    similar_docs = search_with_threshold(query_vector, k=5, threshold=0.5)
     
     if similar_docs:
         print(f" Found {len(similar_docs)} similar documents:")
@@ -148,7 +148,38 @@ def run_query_pipeline():
             print(f" LLM generation failed: {answer}")
         
     else:
+        # Fallback: even if nothing passes the threshold, try top-k unfiltered
         print(" No similar documents found in FAISS index")
+        print(" No documents met the threshold; falling back to top-k results...")
+        topk_raw = search_similar_documents(query_vector, k=10)
+        if topk_raw:
+            top_docs = topk_raw[:3]
+            context_documents = []
+            for i, doc in enumerate(top_docs):
+                context_documents.append({
+                    "rank": i + 1,
+                    "content": doc['document'],
+                    "similarity": doc['similarity_score'],
+                    "metadata": doc.get('metadata', {})
+                })
+            print(f"  Generating answer with Gemini (fallback)...")
+            answer = generate_answer(normalized, context_documents)
+            if not answer.startswith("Error:"):
+                save_llm_response_to_cache(normalized, query_vector, answer)
+                print(f"  Answer saved to cache!")
+                return {
+                    "cache_hit": False,
+                    "normalized": normalized,
+                    "keywords": keywords,
+                    "query_vector": query_vector,
+                    "raw_query": raw_query,
+                    "similar_documents": topk_raw,
+                    "context_documents": context_documents,
+                    "llm_answer": answer,
+                    "llm_success": True
+                }
+            else:
+                print(f" LLM generation failed: {answer}")
         context_documents = []
     
     # Debug: Show some vector details
